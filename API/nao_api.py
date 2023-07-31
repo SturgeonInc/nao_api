@@ -7,110 +7,141 @@ from naoqi import ALProxy
 app = Flask(__name__)
 api = Api(app)
 
-DEFAULT_SPEED = 0.5
 DEFAULT_ROBOT_IP = "127.0.0.1"
 DEFAULT_PORT = 9559
+DEFAULT_SPEED = 0.5
+robot_ip = DEFAULT_ROBOT_IP
+robot_port = DEFAULT_PORT
 
-# TODO MAKE FUNCTIONS TAKE DICTIONARIES SO I CAN PLUG AND PLAY IN CHAIN
-def sayText(text, ip, port):
+def sayText(args, ip, port):
     tts = ALProxy("ALTextToSpeech", ip, port)
-    tts.say(text)
+    tts.say(str(args[0]))
 
-    message = "said: " + text
-    return {"message" : message}, 200
+def lookInDirection(args, ip, port):
+    LOOK_DIRECTIONS = {
+        u"upperLeft" : [30,-25],
+        u"up" : [0,-25],
+        u"upperRight" : [-30,-25],
+        u"left" : [30,0],
+        u"center" : [0,0],
+        u"right" : [-30,0],
+        u"lowerLeft" : [30,25],
+        u"down" : [0,25],
+        u"lowerRight" : [-30,25],
+    }
 
-def lookInDirection(angle, speed, ip, port):
+    direction = args[0]
+
+    if not direction in LOOK_DIRECTIONS:
+        return """No direction argument detected - must be one of: 
+            upperLeft
+            up
+            upperRight
+            left
+            center
+            right
+            lowerLeft
+            down
+            lowerRight
+        """
+
     motion = ALProxy("ALMotion", ip, port)
-    motion.setAngles("HeadYaw",math.radians(angle),speed)
+    joints = ["HeadYaw", "HeadPitch"]
+    angles = [math.radians(LOOK_DIRECTIONS[direction][0]), math.radians(LOOK_DIRECTIONS[direction][1])]
+    motion.setAngles(joints, angles, DEFAULT_SPEED)
 
-    message = "tilted head to face direction: " + str(angle)
-    return {"message" : message}, 200
+def pointAt(args, ip, port):
+    ARM_DIRECTIONS = {
+        u"upperLeft" : [30,-20],
+        u"upwards" : [-12.7,-20],
+        u"upperRight" : [-30,-20],
+        u"left" : [30,20],
+        u"straightOut" : [-12.7,20],
+        u"right" : [-30,20],
+        u"lowerLeft" : [30,60],
+        u"downwards" : [-12.7,60],
+        u"lowerRight" : [-30,60],
+        u"default" : [-12.7,83.1]
+    }
 
-def pointAt(angle, speed, ip, port):
+    ARM_JOINTS = {
+        u"right" : ["RShoulderRoll", "RShoulderPitch"],
+        u"left" : ["LShoulderRoll", "LShoulderPitch"],
+        u"both" : ["RShoulderRoll", "RShoulderPitch", "LShoulderRoll", "LShoulderPitch"]
+    }
+
+    direction = args[0]
+    arm = args[1]
+
+    if not direction in ARM_DIRECTIONS:
+        return """No direction argument detected - must be one of: 
+            upperLeft
+            upwards
+            upperRight
+            left
+            straightOut
+            right
+            lowerLeft
+            downwards
+            lowerRight
+            default
+        """
+    if not arm in ARM_JOINTS:
+        return """No arm argument detected - must be one of: 
+            left
+            right
+            both
+        """
+    
+    joints = ARM_JOINTS[arm]
+
+    angles = ARM_DIRECTIONS[direction]
+
+    limb_multiplier = 1
+    if arm == "both":
+        limb_multiplier = 2
+
+    for i in range(len(angles)):
+        angles[i] = math.radians(angles[i])
+    
     motion = ALProxy("ALMotion", ip, port)
-    motion.setAngles("RShoulderPitch", math.radians(angle), speed)
-    motion.setStiffnesses("RShoulderPitch", 1.0)
+    motion.setAngles(joints, angles*limb_multiplier, DEFAULT_SPEED)
+    motion.setStiffnesses(joints, 1.0)
 
-    message = "pointed in direction: " + str(angle)
-    return {"message" : message}, 200
-
-
-commands = {
-    "sayText" : sayText,
-    "pointAt" : pointAt,
-    "lookInDirection" : lookInDirection
+ACTIONS = {
+    u"SayText" : sayText,
+    u"PointAt" : pointAt,
+    u"LookInDirection" : lookInDirection
 }
 
-class sayText_Endpoint(Resource):
+class Connect_Endpoint(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("text", type=str, required=True, help = "Text to be said")
-        parser.add_argument("ip", default = DEFAULT_ROBOT_IP, required = False, help = "Robot ip address")
-        parser.add_argument("port", type=int, default = DEFAULT_PORT, required = False, help = "Robot port number")
+        parser.add_argument("ip", required = True, help = "Robot ip address")
+        parser.add_argument("port", required = False, help = "Robot port number")
         args = parser.parse_args()
-        
-        return sayText(args["text"], args["ip"], args["port"])
 
-        # try:
-        #     return sayText(args["text"], args["ip"], args["port"])
-        # except:
-        #     return {"message" : "An error has occurred"}, 500
-    
+        robot_ip = args["ip"]
+        robot_port = args["port"]
 
-class lookInDirection_Endpoint(Resource):
+
+class Command_Endpoint(Resource):
     def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("angle", type=float, required=True, help = "Azimuthal angle of head")
-        parser.add_argument("speed", type=float, default = DEFAULT_SPEED, required = False, help = "Motor speed; 0<=x<=1")
-        parser.add_argument("ip", default = DEFAULT_ROBOT_IP, required = False, help = "Robot ip address")
-        parser.add_argument("port", type=int, default = DEFAULT_PORT, required = False, help = "Robot port number")
-        args = parser.parse_args()
-        
-        return lookInDirection(args["angle"], args["speed"], args["ip"], args["port"])
-
-class pointAt_Endpoint(Resource):
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("angle", type=float, required=True, help ="Polar angle of right arm")
-        parser.add_argument("speed", type=float, default = DEFAULT_SPEED, required=False, help="Motor speed; 0<=x<=1")
-        parser.add_argument("ip", default=DEFAULT_ROBOT_IP, required=False, help="Robot ip address")
-        parser.add_argument("port", type=int, default=DEFAULT_PORT, required=False, help="Robot port number")
-        args = parser.parse_args()
-
-        return pointAt(args["angle"], args["speed"], args["ip"], args["port"])
-
-        # try:
-        #     return pointAt(args["angle"], args["speed"], args["ip"], args["port"])
-        # except:
-        #     return {"message" : "An error has occurred"}, 500
-    
-
-class chain_Endpoint(Resource):
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("ip", default = "127.0.0.1", required = False, help = "Robot ip address")
-        parser.add_argument("port", default = 9559, required = False, help = "Robot port number")
-        args = parser.parse_args()
-
         if request.headers["Content-Type"] != "application/json":
-            return {"message" : "command chain failed: expected JSON"}, 400
+            return {"message" : "command(s) failed: expected JSON"}, 400
 
         data = request.get_json()
+        actionList = data["actionList"]
+        print(actionList)
 
-        print(data)
-        for action in data:
-            commands[action["command"]](args["ip"],args["port"])
+        for action in actionList:
+            ACTIONS[action["name"]](action["args"], robot_ip, robot_port)
         
-
-
         return {"message" : "Enacted command chain"}, 200
     
 
-
-api.add_resource(pointAt_Endpoint, "/pointAt")
-api.add_resource(sayText_Endpoint, "/sayText")
-api.add_resource(lookInDirection_Endpoint, "/lookInDirection")
-api.add_resource(chain_Endpoint, "/chain")
+api.add_resource(Command_Endpoint, "/api/behavior")
+api.add_resource(Connect_Endpoint, "/api/connect")
 
 
 if __name__ == "__main__":
