@@ -121,8 +121,10 @@ class Connect_Endpoint(Resource):
         parser.add_argument("port", required = False, help = "Robot port number")
         args = parser.parse_args()
 
+        global robot_ip 
+        global robot_port
         robot_ip = args["ip"]
-        robot_port = args["port"]
+        robot_port= args["port"]
 
 
 class Command_Endpoint(Resource):
