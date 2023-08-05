@@ -37,6 +37,7 @@ function connect() {
 
 }
 
+
 // based on the action button pressed, sends a command to the API server 
 // telling it what action the robot should do
 function enactCommand(elementID) {
