@@ -1,28 +1,30 @@
 var api_address, robot_ip, port
+const DEFAULT_IP = "192.168.1.3"
+const DEFAULT_PORT = 9559
+const DEFAULT_API = "http://127.0.0.1:5000/api"
 
 function $(elementID) {
     return document.getElementById(elementID)
 }
 
+// updates robot ip and port API-side based on what's in the textboxes under the CONNECT heading
 function connect() {
     robot_ip = $("robot_ip").value
-    port = 9559
-    api_address = $("api_ip").value
+    port = DEFAULT_PORT
+    api_address = $("api_address").value
 
-    if (robot_ip == "") {
-        robot_ip = "192.168.1.3"
-    }
+    // check if default values are being for robot ip, port, and api address
+    if (api_address == "") api_address = DEFAULT_API
+
+    if (robot_ip == "") robot_ip = DEFAULT_IP
+    // check and parse port if is included in ip textbox
     else if (robot_ip.indexOf(":") != -1) {
         port = robot_ip.slice(robot_ip.indexOf(":") + 1, robot_ip.length)
         robot_ip = robot_ip.slice(0, robot_ip.indexOf(":"))
     }
 
-    if (api_address == "") {
-        api_address = "http://127.0.0.1:5000/api"
-    }
-
-
-    fetch(api_address+"/connect", {
+    // update robot ip and port API-side
+    fetch(api_address + "/connect", {
         method: "POST",
         body: JSON.stringify({
             ip: robot_ip,
@@ -35,34 +37,34 @@ function connect() {
 
 }
 
+// based on the action button pressed, sends a command to the API server 
+// telling it what action the robot should do
 function enactCommand(elementID) {
     let commandName, arguments
-
-    console.log(elementID)
     commandName = elementID.slice(0, elementID.indexOf(":"))
 
-    //check if elementID has arguments in it, and if so include them
-    if(elementID.indexOf(":") != elementID.length){
-        arguments = [elementID.slice(elementID.indexOf(":")+1)]
+    console.log(elementID)
+
+    // check if elementID has arguments in it, and if so include them
+    // (commands with no args or args that aren't stored in their element ID
+    // have a trailing ":" in their ID e.g. "SayText:")
+    if (elementID.indexOf(":") != elementID.length) {
+        arguments = [elementID.slice(elementID.indexOf(":") + 1)]
     }
 
-    if (commandName == "SayText") {
-        arguments = [$("say_text_textbox").value]
-    }
+    // get SayText args from textbox
+    if (commandName == "SayText") arguments = [$("say_text_textbox").value]
+    // determine PointAt arm args from checkboxes
     else if (commandName == "PointAt") {
         let left = $("left_arm").checked, right = $("right_arm").checked
-        if (left && right) {
-            arguments.push("both")
-        }
-        else if (left) {
-            arguments.push("left")
-        }
-        else {
-            arguments.push("right")
-        }
+
+        if (left && right) arguments.push("both")
+        else if (left) arguments.push("left")
+        else arguments.push("right") // if neither box is checked, right arm will be used
     }
 
-    fetch(api_address+"/behavior", {
+    // send JSON with appropriate action & args to API server
+    fetch(api_address + "/behavior", {
         method: "POST",
         body: JSON.stringify(
             {
@@ -83,8 +85,9 @@ function enactCommand(elementID) {
 
 }
 
-function shakeHeadYes(){
-    fetch(api_address+"/behavior", {
+// enacts shakeHeadYes Action Sequence
+function shakeHeadYes() {
+    fetch(api_address + "/behavior", {
         method: "POST",
         body: JSON.stringify(
             {
@@ -112,8 +115,9 @@ function shakeHeadYes(){
     })
 }
 
-function shakeHeadNo(){
-    fetch(api_address+"/behavior", {
+// enacts shakeHeadNo Action Sequence
+function shakeHeadNo() {
+    fetch(api_address + "/behavior", {
         method: "POST",
         body: JSON.stringify(
             {
@@ -141,8 +145,9 @@ function shakeHeadNo(){
     })
 }
 
-function disco(){
-    fetch(api_address+"/behavior", {
+// enacts disco Action Sequence
+function disco() {
+    fetch(api_address + "/behavior", {
         method: "POST",
         body: JSON.stringify(
             {
