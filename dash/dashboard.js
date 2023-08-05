@@ -36,8 +36,9 @@ function connect() {
 }
 
 function enactCommand(elementID) {
-    console.log(elementID)
     let commandName, arguments
+
+    console.log(elementID)
     commandName = elementID.slice(0, elementID.indexOf(":"))
 
     //check if elementID has arguments in it, and if so include them
