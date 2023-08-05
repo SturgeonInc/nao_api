@@ -99,8 +99,16 @@ function shakeHeadYes() {
                         args: ["up"]
                     },
                     {
+                        name: "Pause",
+                        args: ["300"]
+                    },
+                    {
                         name: "LookInDirection",
                         args: ["down"]
+                    },
+                    {
+                        name: "Pause",
+                        args: ["300"]
                     },
                     {
                         name: "LookInDirection",
@@ -129,8 +137,16 @@ function shakeHeadNo() {
                         args: ["left"]
                     },
                     {
+                        name: "Pause",
+                        args: ["300"]
+                    },
+                    {
                         name: "LookInDirection",
                         args: ["right"]
+                    },
+                    {
+                        name: "Pause",
+                        args: ["300"]
                     },
                     {
                         name: "LookInDirection",

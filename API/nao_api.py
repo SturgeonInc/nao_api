@@ -1,7 +1,6 @@
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api, reqparse
-import math
-import time
+import math, time
 from naoqi import ALProxy
 
 app = Flask(__name__)
@@ -69,15 +68,15 @@ def pointAt(args, ip, port):
     # positive roll being counter-clockwise and postitive pitch being down
     ARM_DIRECTIONS = {
         u"upperLeft" : [30,-20],
-        u"upwards" : [-12.7,-20],
+        u"upwards" : [-13.9,-20],
         u"upperRight" : [-30,-20],
         u"left" : [30,20],
-        u"straightOut" : [-12.7,20],
+        u"straightOut" : [-13.9,20],
         u"right" : [-30,20],
         u"lowerLeft" : [30,60],
-        u"downwards" : [-12.7,60],
+        u"downwards" : [-13.9,60],
         u"lowerRight" : [-30,60],
-        u"default" : [-12.7,83.1]
+        u"default" : [-13.9,81.6]
     }
 
     ARM_JOINTS = {
@@ -111,21 +110,32 @@ def pointAt(args, ip, port):
         """
     
     joints = ARM_JOINTS[arm]
-    angles = ARM_DIRECTIONS[direction]
+    # shallow copy of the list the only way that seems to work
+    angles = [ARM_DIRECTIONS[direction][i] for i in range(len(ARM_DIRECTIONS[direction]))]
 
-    # this is here because we need to have an angle for each arm's joints
-    # so when both arms are active, we need the angles list, but twice
-    # I can't modify the angles list due to it being a deep copy of an immutable dict
-    # You can't even .copy() or list() it, so we append it to itself as we pass it into setAngles
-    limb_multiplier = 1
-    if arm == "both":
-        limb_multiplier = 2
+    # this chunk handles adding additional angles when both arms are active
+    # and reflecting the left shoulderRoll angle if necessary
+    # This is because the default angle for the left shoulder's roll 
+    # is a reflection of the right's (-13.9 vs 13.9 respectively)
+    # so for central directions (e.g. straightOut) this angle must be reflected
+    if arm in ["left", "both"]:
+        angles_left = list(angles)
 
+        if direction in ["upwards", "straightOut", "downwards", "default"]:
+            angles_left[0] *= -1
+
+        if arm == "left":
+            angles = angles_left
+        else:
+            angles += angles_left
+
+    # convert angles to radians
     for i in range(len(angles)):
         angles[i] = math.radians(angles[i])
+
     
     motion = ALProxy("ALMotion", ip, port)
-    motion.setAngles(joints, angles*limb_multiplier, DEFAULT_SPEED)
+    motion.setAngles(joints, angles, DEFAULT_SPEED)
     motion.setStiffnesses(joints, 1.0)
 
 # Args should contain 1 argument: a string containing an int (e.g. "200")
