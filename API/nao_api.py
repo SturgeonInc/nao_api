@@ -1,11 +1,12 @@
-from flask import Flask, json, request
+from flask import Flask, request, make_response
 from flask_restful import Resource, Api, reqparse
-import ast
+#from flask_cors import CORS
 import math
 import time
 from naoqi import ALProxy
 
 app = Flask(__name__)
+#cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 DEFAULT_ROBOT_IP = "127.0.0.1"
@@ -19,6 +20,7 @@ robot_port = DEFAULT_PORT
 # Args should contain 1 argument: a string of text for the robot to speak
 def sayText(args, ip, port):
     tts = ALProxy("ALTextToSpeech", ip, port)
+    print(str(args[0]))
     tts.say(str(args[0]))
 
 # Args should contain 1 argument: a string describing a direction to look.
@@ -197,6 +199,7 @@ def setEyes(args, ip, port):
         leds.setIntensity(COLOR_GROUPS[i], EMOTIONS[args[0]][i])
     
 
+
 ACTIONS = {
     u"SayText" : sayText,
     u"PointAt" : pointAt,
@@ -206,38 +209,48 @@ ACTIONS = {
     u"SetEyes" : setEyes
 }
 
-class Connect_Endpoint(Resource):
+class Endpoint(Resource):
+    @staticmethod
+    def respond(*args):
+        response = make_response(*args)
+        response.headers.add("Access-Control-Allow-Origin", "null")
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        return response
+    def options(self):
+        return Endpoint.respond()
+
+class Connect_Endpoint(Endpoint):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("ip", required = True, help = "Robot ip address")
-        parser.add_argument("port", required = False, help = "Robot port number")
+        parser.add_argument("port", required = False, default = 9559, help = "Robot port number")
         args = parser.parse_args()
 
         global robot_ip
         global robot_port
-        robot_ip = args["ip"]
-        robot_port= args["port"]
+        robot_ip = str(args["ip"])
+        robot_port= int(args["port"])
+        print("IP: " + robot_ip)
+        print("PORT: " + str(robot_port))
 
-class Command_Endpoint(Resource):
+        return Endpoint.respond({"message" : "Connected"}, 200)
+        
+class Command_Endpoint(Endpoint):
     def post(self):
         if request.headers["Content-Type"] != "application/json":
-            return {"message" : "command(s) failed: expected JSON"}, 400
+            return Endpoint.respond({"message" : "command(s) failed: expected JSON"}, 400)
 
         data = request.get_json()
         actionList = data["actionList"]
-        print("Request JSON:")
+        print(robot_ip)
+        print(robot_port)
         print(actionList)
 
         for action in actionList:
             ACTIONS[action["name"]](action["args"], robot_ip, robot_port)
 
-            # try:
-            #     ACTIONS[action["name"]](action["args"], robot_ip, robot_port)
-            # except:
-            #     message = "Unable to complete action: " + str(action)
-            #     return {"message" : message}, 500
-        
-        return {"message" : "Enacted command chain"}, 200
+        return Endpoint.respond({"message" : "Enacted Chain"}, 200)
     
 
 api.add_resource(Command_Endpoint, "/api/behavior")

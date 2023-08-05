@@ -1,0 +1,117 @@
+<!DOCTYPE html><!-- PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"-->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+        .m_buttongroup {
+            border: 1px solid black;
+            padding: 10px
+        }
+
+        .m_twopartgrid {
+            display: grid
+        }
+
+        .m_label {
+            font-family: Verdana, Arial, Helvetica, ui-sans-serif;
+            font-size: smaller
+        }
+
+        .m_button {
+            border: 2px solid gray;
+            text-align: center
+        }
+
+        .m_circle {
+            height: 55px;
+            width: 55px;
+            border-radius: 30px;
+            background: grey
+        }
+    </style>
+
+    <link
+        href="data:text/css,%5Bid*%3D'google_ads_iframe'%5D%2C%5Bid*%3D'taboola-'%5D%2C.taboolaHeight%2C.taboola-placeholder%2C%23credential_picker_container%2C%23credentials-picker-container%2C%23credential_picker_iframe%2C%5Bid*%3D'google-one-tap-iframe'%5D%2C%23google-one-tap-popup-container%2C.google-one-tap-modal-div%7Bdisplay%3Anone!important%3Bmin-height%3A0!important%3Bheight%3A0!important%3B%7D"
+        rel="stylesheet" type="text/css"
+    >
+
+    <script src="dashboard.js"></script>
+
+</head>
+
+<body><u></u>
+
+    <div>
+        <div class="m_twopartgrid">
+            <div>
+                <h3>CONNECT</h3>
+                <label for="robot_ip">NAO Address:</label>
+                <input type="text" id="robot_ip" name="robot_ip" placeholder="192.168.1.3"><br>
+                <label for="api_ip">API Address:</label>
+                <input type="text" id="api_ip" name="api_ip" placeholder="http://127.0.0.1:5000/api"><br>
+                <button onclick="connect()">Connect</button>
+            </div>
+
+            <br><hr style="width:50%;text-align:left;margin-left:0">
+
+            <div id="commands">
+                <h3>SPEAK</h3>
+                <button onclick="enactCommand(this.id)" id="SayText:">Say Text</button>
+                <input type="text" id="say_text_textbox" name="say_text_textbox" placeholder="Enter text to be said..."><br><br>
+
+                <h3>LOOK</h3>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:upperLeft">Upper Left</button>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:upperLeft">Up</button>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:upperLeft">Upper Right</button>
+                <br>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:left">Left</button>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:center">Center</button>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:right">Right</button>
+                <br>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:lowerLeft">Lower Left</button>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:down">Down</button>
+                <button onclick="enactCommand(this.id)" id="LookInDirection:lowerRight">Lower Right</button>
+                <br>
+                <br>
+
+                <h3>EMOTE</h3>
+                <button onclick="enactCommand(this.id)" id="setEyes:happy">Happy Eyes</button>
+                <button onclick="enactCommand(this.id)" id="setEyes:thinking">Thinking Eyes</button>
+                <button onclick="enactCommand(this.id)" id="setEyes:confused">Confused Eyes</button>
+                <br>
+                <button onclick="enactCommand(this.id)" id="setEyes:scared">Scared Eyes</button>
+                <button onclick="enactCommand(this.id)" id="setEyes:terrified">Terrified Eyes</button>
+                <button onclick="enactCommand(this.id)" id="setEyes:love">Love Eyes</button>
+                <button onclick="enactCommand(this.id)" id="setEyes:looking">Looking Eyes</button>
+                <br>
+                <button onclick="enactCommand(this.id)" id="setEyes:default">Default Eyes</button>
+                <br>
+                <br>
+
+                <h3>POINT</h3>
+                <b>Left Arm:</b>
+                <input type="checkbox" id="left_arm" name="left_arm" label=""Left arm>
+                <b>Right Arm:</b>
+                <input type="checkbox" id="right_arm" name="right_arm" checked="true">
+                <br><br>
+                <button onclick="enactCommand(this.id)" id="PointAt:upperLeft">Upper Left</button>
+                <button onclick="enactCommand(this.id)" id="PointAt:upwards">Up</button>
+                <button onclick="enactCommand(this.id)" id="PointAt:upperRight">Upper Right</button>
+                <br>
+                <button onclick="enactCommand(this.id)" id="PointAt:left">Left</button>
+                <button onclick="enactCommand(this.id)" id="PointAt:straightOut">Center</button>
+                <button onclick="enactCommand(this.id)" id="PointAt:right">Right</button>
+                <br>
+                <button onclick="enactCommand(this.id)" id="PointAt:lowerLeft">Lower Left</button>
+                <button onclick="enactCommand(this.id)" id="PointAt:downwards">Down</button>
+                <button onclick="enactCommand(this.id)" id="PointAt:lowerRight">Lower Right</button>
+                <br>
+                <button onclick="enactCommand(this.id)" id="PointAt:default">Default</button>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

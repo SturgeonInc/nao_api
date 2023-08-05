@@ -1,5 +1,5 @@
 {
     "python.pythonPath": "c:\\Python27\\python.exe",
-    "editor.autoIndent": "keep",
+    "editor.autoIndent": "advanced",
     "editor.wrappingIndent": "same",
 }
