@@ -1,12 +1,10 @@
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api, reqparse
-#from flask_cors import CORS
 import math
 import time
 from naoqi import ALProxy
 
 app = Flask(__name__)
-#cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 DEFAULT_ROBOT_IP = "127.0.0.1"

@@ -24,7 +24,6 @@ function connect() {
 
     fetch(api_address+"/connect", {
         method: "POST",
-        //mode: "no-cors",
         body: JSON.stringify({
             ip: robot_ip,
             port: port
@@ -83,16 +82,126 @@ function enactCommand(elementID) {
 
 }
 
-function initializeButtons() { // when the page has loaded
-    let elements = document.getElementById("commands").children; // get all buttons with the class
-    for (let i = 0; i < elements.length; i++) { // newer browsers can use forEach
-        if (elements[i].tagName == "BUTTON"){
-            //elements[i].onclick = command //ehhhh may run on assignment which I don't want
-            //console.log("Assigned functon: " + i)
+function shakeHeadYes(){
+    fetch(api_address+"/behavior", {
+        method: "POST",
+        body: JSON.stringify(
+            {
+                intent: "default intent",
+                description: "default description",
+                actionList: [
+                    {
+                        name: "LookInDirection",
+                        args: ["up"]
+                    },
+                    {
+                        name: "LookInDirection",
+                        args: ["down"]
+                    },
+                    {
+                        name: "LookInDirection",
+                        args: ["center"]
+                    }
+                ]
+            }
+        ),
+        headers: {
+            "Content-type": "application/json"
         }
-    }
-
-    console.log("INITIALIZED BUTTONS")
+    })
 }
 
-//document.onload = initializeButtons()
+function shakeHeadNo(){
+    fetch(api_address+"/behavior", {
+        method: "POST",
+        body: JSON.stringify(
+            {
+                intent: "default intent",
+                description: "default description",
+                actionList: [
+                    {
+                        name: "LookInDirection",
+                        args: ["left"]
+                    },
+                    {
+                        name: "LookInDirection",
+                        args: ["right"]
+                    },
+                    {
+                        name: "LookInDirection",
+                        args: ["center"]
+                    }
+                ]
+            }
+        ),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+}
+
+function disco(){
+    fetch(api_address+"/behavior", {
+        method: "POST",
+        body: JSON.stringify(
+            {
+                intent: "default intent",
+                description: "default description",
+                actionList: [
+                    // hit upper right pose
+                    {
+                        name: "PointAt",
+                        args: ["upperRight", "right"]
+                    },
+                    {
+                        name: "LookInDirection",
+                        args: ["upperRight"]
+                    },
+                    {
+                        name: "SetEyes",
+                        args: ["confused"]
+                    },
+                    {
+                        name: "Pause",
+                        args: ["1000"]
+                    },
+
+                    //hit lower left pose
+                    {
+                        name: "PointAt",
+                        args: ["lowerLeft", "left"]
+                    },
+                    {
+                        name: "LookInDirection",
+                        args: ["lowerLeft"]
+                    },
+                    {
+                        name: "SetEyes",
+                        args: ["terrified"]
+                    },
+                    {
+                        name: "Pause",
+                        args: ["3000"]
+                    },
+
+                    //resume default pose
+                    {
+                        name: "SetEyes",
+                        args: ["default"]
+                    },
+                    {
+                        name: "LookInDirection",
+                        args: ["center"]
+                    },
+                    {
+                        name: "PointAt",
+                        args: ["default", "both"]
+                    },
+                ]
+            }
+        ),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+}
