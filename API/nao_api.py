@@ -246,10 +246,10 @@ class Connect_Endpoint(Endpoint):
         
 class Command_Endpoint(Endpoint):
     def post(self):
-        if request.headers["Content-Type"] != "application/json":
+        if request.headers["Content-Type"] != "application/json": # type: ignore
             return Endpoint.respond({"message" : "command(s) failed: expected JSON"}, 400)
 
-        data = request.get_json()
+        data = request.get_json() # type: ignore
         actionList = data["actionList"]
         print(robot_ip)
         print(robot_port)
