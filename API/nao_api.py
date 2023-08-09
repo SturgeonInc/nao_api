@@ -8,7 +8,7 @@ api = Api(app)
 
 DEFAULT_ROBOT_IP = "127.0.0.1"
 DEFAULT_PORT = 9559
-DEFAULT_SPEED = 0.5
+DEFAULT_SPEED = 0.2
 
 # These are the variables that get used in function calls
 robot_ip = DEFAULT_ROBOT_IP
@@ -150,22 +150,23 @@ def pause(args, ip, port):
 def tiltHead(args, ip, port):
     pass
 
+EMOTIONS = {
+    u"happy" : [0.5,0,0],
+    u"confused" : [0,1,1],
+    u"thinking" : [1,1,0,],
+    u"scared" : [1,0,0],
+    u"terrified" : [1,0,0],
+    u"love" : [0.2,0,0],
+    u"looking" : [0,1,0],
+    u"default" : "default",
+}
+
 # Args should contain 1 argument: a string representing the emotion the robot will
 # attempt to emulate by changing the color of its eyes
 # Currently, "scared" or "terrified" yields red eyes, "confused" yields blue eyes 
 # All other values can result in the robot using the standard light color for the eyes
 # A full list of emotions that intend(?) to be supported can be found in the EMOTIONS dict
 def setEyes(args, ip, port):
-    EMOTIONS = {
-        u"happy" : "default",
-        u"confused" : [0,0,1],
-        u"thinking" : "default",
-        u"scared" : [1,0,0],
-        u"terrified" : [1,0,0],
-        u"love" : "default",
-        u"looking" : "default",
-        u"default" : "default",
-    }
 
     if not args[0] in EMOTIONS:
         return """Emotion not recognized. Must be one of:

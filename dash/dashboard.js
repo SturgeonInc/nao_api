@@ -228,3 +228,59 @@ function disco() {
         }
     })
 }
+
+// enacts welcome Action Sequence
+function welcome() {
+    fetch(api_address + "/behavior", {
+        method: "POST",
+        body: JSON.stringify(
+            {
+                intent: "default intent",
+                description: "default description",
+                actionList: [
+                    // hit upper right pose
+                    {
+                        name: "LookInDirection",
+                        args: ["upperRight"]
+                    },
+                    {
+                        name: "SetEyes",
+                        args: ["looking"]
+                    },
+                    {
+                        name: "Pause",
+                        args: ["1000"]
+                    },
+
+                    //hit lower left pose
+                    {
+                        name: "LookInDirection",
+                        args: ["center"]
+                    },
+                    {
+                        name: "Pause",
+                        args: ["1000"]
+                    },
+
+                    //resume default pose
+                    {
+                        name: "SayText",
+                        args: ["welcome!"]
+                    },
+                    {
+                        name: "Pause",
+                        args: ["1000"]
+                    },
+                    {
+                        name: "SetEyes",
+                        args: ["default"]
+                    }
+                    
+                ]
+            }
+        ),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+}
