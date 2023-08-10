@@ -80,17 +80,13 @@
         }
     </style>
 
-    <link
-        href="data:text/css,%5Bid*%3D'google_ads_iframe'%5D%2C%5Bid*%3D'taboola-'%5D%2C.taboolaHeight%2C.taboola-placeholder%2C%23credential_picker_container%2C%23credentials-picker-container%2C%23credential_picker_iframe%2C%5Bid*%3D'google-one-tap-iframe'%5D%2C%23google-one-tap-popup-container%2C.google-one-tap-modal-div%7Bdisplay%3Anone!important%3Bmin-height%3A0!important%3Bheight%3A0!important%3B%7D"
-        rel="stylesheet" type="text/css">
-
     <script src="dashboard.js"></script>
 
 </head>
 
 <body>
-
     <div>
+        <h3 id="connection_status">CONNECTION STATUS: Disconnected</h3>
         <label for="robot_ip">NAO Address:</label>
         <input type="text" id="robot_ip" name="robot_ip" placeholder="192.168.1.3"><br>
         <label for="api_address">API Address:</label>
@@ -99,45 +95,46 @@
     </div>
 
     <br>
+    
     <hr style="width:50%;text-align:left;margin-left:0">
 
     <div id="commands">
         <h3>SPEAK</h3>
-        <button onclick="enactCommand(this.id)" id="SayText:">Say Text</button>
+        <button onclick="enactCommandOnButtonPress(this.id)" id="SayText:">Say Text</button>
         <input type="text" id="say_text_textbox" name="say_text_textbox" placeholder="Enter text to be said..."><br><br>
 
         <h3>LOOK</h3>
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="LookInDirection:upperLeft">Upper Left</button>
-            <button onclick="enactCommand(this.id)" id="LookInDirection:up">Up</button>
-            <button onclick="enactCommand(this.id)" id="LookInDirection:upperRight">Upper Right</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:upperLeft">Upper Left</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:up">Up</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:upperRight">Upper Right</button>
             <br>
         </div>
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="LookInDirection:left">Left</button>
-            <button onclick="enactCommand(this.id)" id="LookInDirection:center">Center</button>
-            <button onclick="enactCommand(this.id)" id="LookInDirection:right">Right</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:left">Left</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:center">Center</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:right">Right</button>
         </div>
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="LookInDirection:lowerLeft">Lower Left</button>
-            <button onclick="enactCommand(this.id)" id="LookInDirection:down">Down</button>
-            <button onclick="enactCommand(this.id)" id="LookInDirection:lowerRight">Lower Right</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:lowerLeft">Lower Left</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:down">Down</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="LookInDirection:lowerRight">Lower Right</button>
         </div>
 
         <br>
 
         <h3>EMOTE</h3>
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="SetEyes:happy">Happy Eyes</button>
-            <button onclick="enactCommand(this.id)" id="SetEyes:thinking">Thinking Eyes</button>
-            <button onclick="enactCommand(this.id)" id="SetEyes:confused">Confused Eyes</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:happy">Happy Eyes</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:thinking">Thinking Eyes</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:confused">Confused Eyes</button>
         </div>
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="SetEyes:scared">Scared Eyes</button>
-            <button onclick="enactCommand(this.id)" id="SetEyes:terrified">Terrified Eyes</button>
-            <button onclick="enactCommand(this.id)" id="SetEyes:love">Love Eyes</button>
-            <button onclick="enactCommand(this.id)" id="SetEyes:looking">Looking Eyes</button>
-            <button style="width:66.6%" onclick="enactCommand(this.id)" id="SetEyes:default">Default Eyes</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:scared">Scared Eyes</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:terrified">Terrified Eyes</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:love">Love Eyes</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:looking">Looking Eyes</button>
+            <button style="width:66.6%" onclick="enactCommandOnButtonPress(this.id)" id="SetEyes:default">Default Eyes</button>
         </div>
 
         <br>
@@ -151,21 +148,21 @@
         <br><br>
 
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="PointAt:upperLeft">Upper Left</button>
-            <button onclick="enactCommand(this.id)" id="PointAt:upwards">Up</button>
-            <button onclick="enactCommand(this.id)" id="PointAt:upperRight">Upper Right</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:upperLeft">Upper Left</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:upwards">Up</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:upperRight">Upper Right</button>
         </div>
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="PointAt:left">Left</button>
-            <button onclick="enactCommand(this.id)" id="PointAt:straightOut">Center</button>
-            <button onclick="enactCommand(this.id)" id="PointAt:right">Right</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:left">Left</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:straightOut">Center</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:right">Right</button>
         </div>
         <div class="btn-group">
-            <button onclick="enactCommand(this.id)" id="PointAt:lowerLeft">Lower Left</button>
-            <button onclick="enactCommand(this.id)" id="PointAt:downwards">Down</button>
-            <button onclick="enactCommand(this.id)" id="PointAt:lowerRight">Lower Right</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:lowerLeft">Lower Left</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:downwards">Down</button>
+            <button onclick="enactCommandOnButtonPress(this.id)" id="PointAt:lowerRight">Lower Right</button>
         </div>
-        <button class="button" style="width:500px" onclick="enactCommand(this.id)" id="PointAt:default">Default</button>
+        <button class="button" style="width:500px" onclick="enactCommandOnButtonPress(this.id)" id="PointAt:default">Default</button>
 
         <br><br>
 
