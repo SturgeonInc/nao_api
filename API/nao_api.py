@@ -52,7 +52,7 @@ def lookInDirection(args, ip , port):
 
 
 # for pointAt; elements are of the form [ShoulderRoll angle, ShoulderPitch angle]
-# with postitive roll being CCW and pitch being angle of depression from the horizon
+# with positive roll being CCW and pitch being angle of depression from the horizon
 ARM_DIRECTIONS = {
     u"upperLeft" : [30,-20],
     u"upwards" : [-13.9,-20],
